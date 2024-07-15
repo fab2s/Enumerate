@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "fab2s\\Enumerated\\": "src"
+            "fab2s\\Enumerate\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "fab2s\\Enumerated\\Tests\\": "tests"
+            "fab2s\\Enumerate\\Tests\\": "tests"
         }
     },
     "scripts": {

@@ -1,20 +1,20 @@
 <?php
 
 /*
- * This file is part of fab2s/enumerated.
- * (c) Fabrice de Stefanis / https://github.com/fab2s/enumerated
+ * This file is part of fab2s/Enumerate.
+ * (c) Fabrice de Stefanis / https://github.com/fab2s/Enumerate
  * This source file is licensed under the MIT license which you will
  * find in the LICENSE file or at https://opensource.org/licenses/MIT
  */
 
 namespace fab2s\Enumerated\Tests\Artifacts;
 
-use fab2s\Enumerated\Enumerated;
-use JsonSerializable;
+use fab2s\Enumerated\EnumerateInterface;
+use fab2s\Enumerated\EnumerateTrait;
 
-enum UnitEnum implements JsonSerializable
+enum UnitEnum implements EnumerateInterface
 {
-    use Enumerated;
+    use EnumerateTrait;
 
     case ONE;
     case TWO;

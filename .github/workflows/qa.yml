@@ -7,7 +7,7 @@ on:
     types: [ opened, synchronize ]
 jobs:
   tests:
-    name: Enumerated QA
+    name: Enumerate QA
     runs-on: ubuntu-latest
 
     steps:
