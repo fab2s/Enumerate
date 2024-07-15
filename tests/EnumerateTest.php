@@ -1,40 +1,51 @@
 <?php
 
 /*
- * This file is part of fab2s/enumerated.
- * (c) Fabrice de Stefanis / https://github.com/fab2s/enumerated
+ * This file is part of fab2s/Enumerate.
+ * (c) Fabrice de Stefanis / https://github.com/fab2s/Enumerate
  * This source file is licensed under the MIT license which you will
  * find in the LICENSE file or at https://opensource.org/licenses/MIT
  */
 
-namespace fab2s\Enumerated\Tests;
+namespace fab2s\Enumerate\Tests;
 
-use fab2s\Enumerated\Tests\Artifacts\AnotherIntBackedEnum;
-use fab2s\Enumerated\Tests\Artifacts\AnotherStringBackedEnum;
-use fab2s\Enumerated\Tests\Artifacts\IntBackedEnum;
-use fab2s\Enumerated\Tests\Artifacts\StringBackedEnum;
-use fab2s\Enumerated\Tests\Artifacts\UnitEnum;
+use fab2s\Enumerate\Enumerate;
+use fab2s\Enumerate\Tests\Artifacts\AnotherIntBackedEnum;
+use fab2s\Enumerate\Tests\Artifacts\AnotherStringBackedEnum;
+use fab2s\Enumerate\Tests\Artifacts\IntBackedEnum;
+use fab2s\Enumerate\Tests\Artifacts\StringBackedEnum;
+use fab2s\Enumerate\Tests\Artifacts\UnitEnum;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionException;
 use Throwable;
 
-class EnumeratedTest extends TestCase
+class EnumerateTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     */
     public function test_is_methods(): void
     {
-        $this->assertTrue(StringBackedEnum::isStringBacked());
-        $this->assertFalse(StringBackedEnum::isIntBacked());
-        $this->assertTrue(StringBackedEnum::isBacked());
+        $this->assertTrue(Enumerate::isStringBacked(StringBackedEnum::class));
+        $this->assertFalse(Enumerate::isIntBacked(StringBackedEnum::class));
+        $this->assertTrue(Enumerate::isBacked(StringBackedEnum::class));
+        $this->assertSame('string', Enumerate::getType(StringBackedEnum::class));
 
-        $this->assertFalse(IntBackedEnum::isStringBacked());
-        $this->assertTrue(IntBackedEnum::isIntBacked());
-        $this->assertTrue(IntBackedEnum::isBacked());
+        $this->assertFalse(Enumerate::isStringBacked(IntBackedEnum::class));
+        $this->assertTrue(Enumerate::isIntBacked(IntBackedEnum::class));
+        $this->assertTrue(Enumerate::isBacked(IntBackedEnum::class));
+        $this->assertSame('int', Enumerate::getType(IntBackedEnum::class));
 
-        $this->assertFalse(UnitEnum::isStringBacked());
-        $this->assertFalse(UnitEnum::isIntBacked());
-        $this->assertFalse(UnitEnum::isBacked());
+        $this->assertFalse(Enumerate::isStringBacked(UnitEnum::class));
+        $this->assertFalse(Enumerate::isIntBacked(UnitEnum::class));
+        $this->assertFalse(Enumerate::isBacked(UnitEnum::class));
+        $this->assertNull(Enumerate::getType(UnitEnum::class));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_equals(): void
     {
         $this->assertTrue(StringBackedEnum::ONE->equals(...StringBackedEnum::cases()));
@@ -61,7 +72,6 @@ class EnumeratedTest extends TestCase
 
         $this->assertTrue(IntBackedEnum::ONE->compares(...IntBackedEnum::cases()));
         $this->assertTrue(IntBackedEnum::ONE->compares(1));
-        $this->assertTrue(IntBackedEnum::ONE->compares('ONE'));
         $this->assertTrue(IntBackedEnum::ONE->compares(...AnotherIntBackedEnum::cases()));
         $this->assertTrue(IntBackedEnum::ONE->compares(AnotherIntBackedEnum::ANOTHER_ONE));
         $this->assertFalse(IntBackedEnum::ONE->compares('1'));
@@ -73,6 +83,8 @@ class EnumeratedTest extends TestCase
 
     /**
      * @param class-string<UnitEnum|StringBackedEnum|IntBackedEnum> $enumFqn
+     *
+     * @throws ReflectionException
      */
     #[DataProvider('tryFromProvider')]
     public function test_try_from(
@@ -83,30 +95,18 @@ class EnumeratedTest extends TestCase
     ): void {
         $this->assertSame($expected, $enumFqn::tryFromAny($value, $strict));
 
-        if (! is_object($value)) {
-            $this->assertSame($expected, $enumFqn::tryFromValue($value, $strict));
-        }
-
         if ($expected === null) {
             try {
-                $enumFqn::fromAny($value);
+                $enumFqn::fromAny($value, $strict);
             } catch (Throwable $e) {
                 $this->assertInstanceOf(InvalidArgumentException::class, $e);
             }
 
-            if (! is_object($value)) {
+            if (is_string($value)) {
                 try {
-                    $enumFqn::fromValue($value);
+                    $enumFqn::fromName($value);
                 } catch (Throwable $e) {
                     $this->assertInstanceOf(InvalidArgumentException::class, $e);
-                }
-
-                if (is_string($value)) {
-                    try {
-                        $enumFqn::fromName($value);
-                    } catch (Throwable $e) {
-                        $this->assertInstanceOf(InvalidArgumentException::class, $e);
-                    }
                 }
             }
 
@@ -114,7 +114,9 @@ class EnumeratedTest extends TestCase
         }
 
         if (! is_object($value)) {
-            if (! $enumFqn::isIntBacked() || ! $strict) {
+            if (! Enumerate::isIntBacked($enumFqn) || ! $strict) {
+                $this->assertSame($expected, $enumFqn::tryFromName($value));
+
                 $this->assertSame($expected, $enumFqn::fromName($value));
             }
         }
@@ -241,7 +243,7 @@ class EnumeratedTest extends TestCase
             'IntBackedEnum_ONE_string' => [
                 'enumFqn'  => IntBackedEnum::class,
                 'value'    => 'ONE',
-                'expected' => IntBackedEnum::ONE,
+                'expected' => null,
                 'strict'   => false,
             ],
         ];

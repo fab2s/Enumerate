@@ -1,14 +1,14 @@
 {
-    "name": "fab2s/enumerated",
-    "description": "Enumerated, a nice boost to your enums",
+    "name": "fab2s/enumerate",
+    "description": "Enumerate, a nice boost to your enums",
     "type": "library",
     "authors": [{
         "name": "Fabrice de Stefanis"
     }],
-    "homepage": "https://github.com/fab2s/enumerated",
+    "homepage": "https://github.com/fab2s/Enumerate",
     "support": {
-        "issues": "https://github.com/fab2s/enumerated/issues",
-        "source": "https://github.com/fab2s/enumerated"
+        "issues": "https://github.com/fab2s/Enumerate/issues",
+        "source": "https://github.com/fab2s/Enumerate"
     },
     "keywords": [
         "Enum",
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "fab2s\\Enumerated\\": "src"
+            "fab2s\\Enumerate\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "fab2s\\Enumerated\\Tests\\": "tests"
+            "fab2s\\Enumerate\\Tests\\": "tests"
         }
     },
     "scripts": {
