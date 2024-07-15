@@ -1,0 +1,48 @@
+{
+    "name": "fab2s/enumerated",
+    "description": "Enumerated, a nice boost to your enums",
+    "type": "library",
+    "authors": [{
+        "name": "Fabrice de Stefanis"
+    }],
+    "homepage": "https://github.com/fab2s/enumerated",
+    "support": {
+        "issues": "https://github.com/fab2s/enumerated/issues",
+        "source": "https://github.com/fab2s/enumerated"
+    },
+    "keywords": [
+        "Enum",
+        "PHP"
+    ],
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "laravel/pint": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "fab2s\\Enumerated\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "fab2s\\Enumerated\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "rm -rf .*.cache"
+        ],
+        "post-install-cmd": [
+            "rm -rf .*.cache"
+        ],
+        "fix": "@php vendor/bin/pint --config pint.json",
+        "test": "@php vendor/bin/phpunit",
+        "cov": "@php vendor/bin/phpunit --coverage-html ./cov"
+    }
+}
