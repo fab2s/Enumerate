@@ -1,9 +1,9 @@
 # Enumerate
-[![QA](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml) [![CI](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/fab2s/Enumerate/graph/badge.svg?token=M4PZ6Z6MqU)](https://codecov.io/gh/fab2s/Enumerate) [![Latest Stable Version](http://poser.pugx.org/fab2s/Enumerate/v)](https://packagist.org/packages/fab2s/Enumerate) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![License](http://poser.pugx.org/fab2s/Enumerate/license)](https://packagist.org/packages/fab2s/Enumerate)
+[![QA](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml) [![CI](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/fab2s/Enumerate/graph/badge.svg?token=M4PZ6Z6MqU)](https://codecov.io/gh/fab2s/Enumerate) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![License](http://poser.pugx.org/fab2s/Enumerate/license)](https://packagist.org/packages/fab2s/Enumerate)
 
 `Enumerate` gives a nice boost to your [native enums](https://www.php.net/manual/en/language.types.enumerations.php).
 
-## Why ? 
+## Why ?
 
 `PHP Enums` are a wonderful addition to PHP, but they miss few things to make them fully practical in real world. If you dig, you will find that most of the current limitations seems to deal more with ideology than pragmatism.
 
@@ -50,7 +50,6 @@ enum MyEnum // :string or : int or nothing
 `Enumerate` implements `jsonSerialize()`, but, and this is another questionable matter with `PHP Traits`, you will have to declare that your `enum` implements the `JsonSerializable` interface as traits currently cannot:
 
 ```php
-
 use fab2s\Enumerate\EnumerateTrait;
 use JsonSerializable;
 
@@ -133,10 +132,10 @@ Doing so is of course a bit slower than value matching as we have to iterate thr
 No need to say that doing this makes it possible to store and transfer `UnitEnum` with ease.
 
 ```php
-
 use fab2s\Enumerate\EnumerateTrait;
+use fab2s\Enumerate\EnumerateInterface;
 
-enum SomeUnitEnum implements JsonSerializable
+enum SomeUnitEnum implements EnumerateInterface
 {
     use EnumerateTrait;
 
