@@ -11,7 +11,7 @@ As a software craftsmanship in spirit, I think that a feature like that should c
 
 For example, I just don't understand why `enums` are not, and worst, cannot be `stringable`. It's ok if you think that an `Unitenum` should not be `stringable`, or if you would be hurt to think that it would be treason to even imagine to `(string)` an `IntBackedEnum`, but these are all `SHOULDs` that just limit the way we can use them in real life situations when they become a `MUST`.
 
-In practice, even `string` casting an `IntBackedEnum` could make sens in `HTTP` context where string is the only type, or when writing in a database, as DBMS are decent enough to realize that a string integer is an integer as long as the column definition asks for such integer type. Yes it is a shortcut, but why should we be forced to follow every detour ? 
+In practice, even `string` casting an `IntBackedEnum` could make sens in `HTTP` context where string is the only type, or when writing in a database. Yes these would be shortcuts, but why should we be forced to follow every detour ? 
 
 Of course, I would prefer an interface that would allow us to `scalar` cast objects and end up with an `int` or `string` for enums, but this is a dream :-)
 
@@ -25,6 +25,8 @@ Anyway, `enums` are great, and this package aims at making them just a little mo
 
 It provides with a unified way to instantiate and use them.
 
+This package is implemented as a static helper class `Enumerate`, that can be used separately to manipulate any enum in a standardised way (instantiation, json serialization ...), a trait, `EnumerateTrait`, that can be used in your enum to make them easier to deal with and an interface, `EnumerateInterface` that extends `JsonSerializable` and can be useful to `instanceof` your `enums`.
+
 ## Installation
 
 `Enumerate` can be installed using composer:
@@ -35,10 +37,9 @@ composer require "fab2s/enumerate"
 
 ## Usage
 
-To boost **any** PHP enum, just use the `Enumerate` trait in your enums:
+To boost **any** PHP enum, use the `EnumerateTrait` trait in your enums:
 
 ```php
-
 use fab2s\Enumerate\EnumerateTrait;
 
 enum MyEnum // :string or : int or nothing
@@ -47,21 +48,21 @@ enum MyEnum // :string or : int or nothing
     // ...
 ```
 
-`Enumerate` implements `jsonSerialize()`, but, and this is another questionable matter with `PHP Traits`, you will have to declare that your `enum` implements the `JsonSerializable` interface as traits currently cannot:
+`Enumerate` implements `jsonSerialize()` through `EnumerateInterface`, but, and this is another questionable matter with `PHP Traits`, you will have to declare that your `enum` implements the `JsonSerializable` or `EnumerateInterface` interface as traits currently cannot:
 
 ```php
 use fab2s\Enumerate\EnumerateTrait;
-use JsonSerializable;
+use fab2s\Enumerate\EnumerateInterface;
 
-enum MyEnum /* :string or : int or nothing */ implements JsonSerializable
+enum MyEnum /* :string or : int or nothing */ implements EnumerateInterface // or JsonSerializable
 {
     use EnumerateTrait;
     // ...
 ```
 
-
-
 ## So what ?
+
+From there your enums benefits from most `Enumerate` helper methods, to the exception to the type resolution methods.
 
 ### `BackedEnum::tryFrom`
 
@@ -74,7 +75,19 @@ There is nothing wrong with _trying_ as long as the result is consistent. In pra
 `Enumerate` solves this by adding the `tryFromAny` method:
 
 ```php
-public static function tryFromAny(int|string|UnitEnum|null $value, bool $strict = true): ?static
+// in EnumerateTrait /  EnumerateInterface
+    /**
+     * @throws ReflectionException
+     */
+    public static function tryFromAny(int|string|UnitEnum|null $value, bool $strict = true): ?static
+
+// in Enumerate
+    /**
+     * @param UnitEnum|class-string<UnitEnum|BackedEnum> $enum
+     *
+     * @throws ReflectionException
+     */
+    public static function tryFromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum|null
 ```
 
 So now you can try for more types in a way that is just more practical without breaking the consistency of the answer.
@@ -87,10 +100,15 @@ Nothing fancy, just usability.
 ```php
 // will always be null
 $result = MyEnum::tryFromAny(AnotherEnumWithOverlappingCases::someCase); 
+// same as 
+$result = Enumerate::tryFromAny(MyEnum::class, AnotherEnumWithOverlappingCases::someCase); 
 
 // can return MyEnum::someCase if the case exist in MyEnum
 // matched by value or case name for Unitenum's
-$result = MyEnum::tryFromAny(AnotherEnumWithOverlappingCases::someCase, false); 
+$result = MyEnum::tryFromAny(AnotherEnumWithOverlappingCases::someCase, false);
+// same as, works with enum FQN and instances
+$result = Enumerate::tryFromAny(MyEnum::anyCase, AnotherEnumWithOverlappingCases::someCase, false);
+
 ```
 
 ### `BackedEnum::from`
@@ -102,9 +120,15 @@ Like with `tryFromAny`, you can reduce _strictness_:
 // throws an InvalidArgumentException if someCase is not present in MyEnum
 // either by value for BackedEnum or case name for Unitenum
 $result = MyEnum::fromAny('someCase');
+// same as
+$result = Enumerate::fromAny(MyEnum::class, 'someCase');
+
 
 // can return MyEnum::someCase if the case exist in MyEnum
-$result = MyEnum::fromAny(AnotherEnumWithOverlappingCases::someCase, false); 
+$result = MyEnum::fromAny(AnotherEnumWithOverlappingCases::someCase, false);
+// same as
+$result = Enumerate::fromAny(MyEnum::class, AnotherEnumWithOverlappingCases::someCase, false);
+
 ```
 
 ### _Merely_ `Stringable`
@@ -118,7 +142,11 @@ Types are respected, to `toValue` will return:
 And all these value are valid input to create an instance using `tryFromAny` / `fromAny`.
 
 ```php
-MyEnum::someCase->toValue(); // either someCase name for UnitEnum or someCase value for BackedEnum
+// either someCase name for UnitEnum or someCase value for BackedEnum
+$result = MyEnum::someCase->toValue();
+// same as
+$result = Enumerate::toValue(MyEnum::someCase);
+
 ```
 
 ### `UnitEnum`
@@ -132,6 +160,7 @@ Doing so is of course a bit slower than value matching as we have to iterate thr
 No need to say that doing this makes it possible to store and transfer `UnitEnum` with ease.
 
 ```php
+use fab2s\Enumerate\Enumerate;
 use fab2s\Enumerate\EnumerateTrait;
 use fab2s\Enumerate\EnumerateInterface;
 
@@ -144,12 +173,19 @@ enum SomeUnitEnum implements EnumerateInterface
     case three;
 }
 
+SomeUnitEnum::tryFromName('ONE'); // SomeUnitEnum::ONE
+// same as
+Enumerate::tryFromName(SomeUnitEnum::class, 'ONE'); // SomeUnitEnum::ONE
+
 // the toValue method is the nearest we can get to stringable
 SomeUnitEnum::ONE->tovalue(); // "ONE"
 // same as
 SomeUnitEnum::ONE->jsonSerialize(); // "ONE"
+// same as, except it will take nulls in
+Enumerate::toValue(SomeUnitEnum::ONE); // "ONE"
 // same as 
 json_encode(SomeUnitEnum::ONE); // "ONE"
+
 
 SomeUnitEnum::fromAny('TWO'); // UnitEnum::TWO
 SomeUnitEnum::tryFromAny('TWO'); // UnitEnum::TWO
@@ -190,12 +226,18 @@ Again, `UnitEnum` are matched by `case name` which seams perfectly reasonable.
 // true when someCaseValue is the value of someCase for BackedEnum
 // false for UnitEnum, would be true with someCase
 MyEnum::someCase->equals('someCaseValue'); 
+// same as 
+Enumerate::equals(MyEnum::someCase, 'someCaseValue')
 // always true
 MyEnum::someCase->equals(MyEnum::someCase, null, 'whatever' /*, ...*/); 
+// same as 
+Enumerate::equals(MyEnum::someCase, MyEnum::someCase, null, 'whatever' /*, ...*/)
 
 // true if we have an equality by value for BackedEnum
 // or by name for UnitEnum
 MyEnum:::someCase->compares(AnotherEnumWithOverlappingCases::someCase); 
+// same as 
+Enumerate::compares(MyEnum:::someCase, AnotherEnumWithOverlappingCases::someCase); 
 ```
 
 ## Requirements

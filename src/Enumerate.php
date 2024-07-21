@@ -56,7 +56,7 @@ class Enumerate
      */
     public static function fromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum
     {
-        return static::tryFromAny($enum, $value, $strict) ?? throw new InvalidArgumentException('Argument $value is not a valid enum case for ' . static::toEnumFqn($enum));
+        return static::tryFromAny($enum, $value, $strict) ?? throw new InvalidArgumentException('Argument $value has no value match in enum ' . static::toEnumFqn($enum));
     }
 
     /**
@@ -78,7 +78,7 @@ class Enumerate
      */
     public static function fromName(UnitEnum|string $enum, string $name): UnitEnum|BackedEnum
     {
-        return static::tryFromName($enum, $name) ?? throw new InvalidArgumentException('Argument $name is not a valid enum case for ' . static::toEnumFqn($enum));
+        return static::tryFromName($enum, $name) ?? throw new InvalidArgumentException('Argument $name does not match any case name in enum ' . static::toEnumFqn($enum));
     }
 
     public static function toEnumFqn(UnitEnum|string $enum): string
