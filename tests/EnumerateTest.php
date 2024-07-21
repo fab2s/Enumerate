@@ -30,16 +30,19 @@ class EnumerateTest extends TestCase
         $this->assertTrue(Enumerate::isStringBacked(StringBackedEnum::class));
         $this->assertFalse(Enumerate::isIntBacked(StringBackedEnum::class));
         $this->assertTrue(Enumerate::isBacked(StringBackedEnum::class));
+        $this->assertTrue(Enumerate::isBacked(StringBackedEnum::ONE));
         $this->assertSame('string', Enumerate::getType(StringBackedEnum::class));
 
         $this->assertFalse(Enumerate::isStringBacked(IntBackedEnum::class));
         $this->assertTrue(Enumerate::isIntBacked(IntBackedEnum::class));
         $this->assertTrue(Enumerate::isBacked(IntBackedEnum::class));
+        $this->assertTrue(Enumerate::isBacked(IntBackedEnum::ONE));
         $this->assertSame('int', Enumerate::getType(IntBackedEnum::class));
 
         $this->assertFalse(Enumerate::isStringBacked(UnitEnum::class));
         $this->assertFalse(Enumerate::isIntBacked(UnitEnum::class));
         $this->assertFalse(Enumerate::isBacked(UnitEnum::class));
+        $this->assertFalse(Enumerate::isBacked(UnitEnum::ONE));
         $this->assertNull(Enumerate::getType(UnitEnum::class));
     }
 
@@ -50,6 +53,8 @@ class EnumerateTest extends TestCase
     {
         $this->assertTrue(StringBackedEnum::ONE->equals(...StringBackedEnum::cases()));
         $this->assertTrue(StringBackedEnum::ONE->equals('ONE'));
+        $this->assertTrue(Enumerate::equals(StringBackedEnum::ONE, 'ONE'));
+        $this->assertFalse(Enumerate::equals(StringBackedEnum::ONE, null));
         $this->assertFalse(StringBackedEnum::ONE->equals(1));
 
         $this->assertTrue(IntBackedEnum::ONE->equals(...IntBackedEnum::cases()));
@@ -60,12 +65,19 @@ class EnumerateTest extends TestCase
         $this->assertTrue(UnitEnum::ONE->equals(...UnitEnum::cases()));
         $this->assertTrue(UnitEnum::ONE->equals('ONE'));
         $this->assertFalse(UnitEnum::ONE->equals('TWO'));
+        $this->assertFalse(UnitEnum::ONE->equals(null));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_compare(): void
     {
         $this->assertTrue(StringBackedEnum::ONE->compares(...StringBackedEnum::cases()));
         $this->assertTrue(StringBackedEnum::ONE->compares('ONE'));
+        $this->assertTrue(Enumerate::compares(StringBackedEnum::ONE, 'ONE'));
+        $this->assertFalse(Enumerate::compares(StringBackedEnum::ONE, null));
+
         $this->assertTrue(StringBackedEnum::ONE->compares(...AnotherStringBackedEnum::cases()));
         $this->assertTrue(StringBackedEnum::ONE->compares(AnotherStringBackedEnum::ANOTHER_ONE));
         $this->assertFalse(StringBackedEnum::ONE->compares(1));
@@ -79,6 +91,7 @@ class EnumerateTest extends TestCase
         $this->assertTrue(UnitEnum::ONE->compares(...UnitEnum::cases()));
         $this->assertTrue(UnitEnum::ONE->compares('ONE'));
         $this->assertFalse(UnitEnum::ONE->compares('TWO'));
+        $this->assertFalse(UnitEnum::ONE->compares(null));
     }
 
     /**
@@ -122,7 +135,13 @@ class EnumerateTest extends TestCase
         }
 
         $instance      = $enumFqn::tryFromAny($value, $strict);
-        $expectedValue = $instance->value ?? $instance->name;
+        $expectedValue = Enumerate::toValue($instance);
+        $this->assertSame($expectedValue, $instance->toValue());
+        $this->assertSame($expectedValue, $instance->jsonSerialize());
+        $this->assertSame(json_encode($expectedValue), json_encode($instance));
+
+        $instance      = Enumerate::tryFromAny($instance, $value, $strict);
+        $expectedValue = Enumerate::toValue($instance);
         $this->assertSame($expectedValue, $instance->toValue());
         $this->assertSame($expectedValue, $instance->jsonSerialize());
         $this->assertSame(json_encode($expectedValue), json_encode($instance));

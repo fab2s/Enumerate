@@ -1,5 +1,6 @@
 # Enumerate
-[![QA](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml) [![CI](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/fab2s/Enumerate/graph/badge.svg?token=M4PZ6Z6MqU)](https://codecov.io/gh/fab2s/Enumerate) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![License](http://poser.pugx.org/fab2s/Enumerate/license)](https://packagist.org/packages/fab2s/Enumerate)
+[![QA](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml) [![CI](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/fab2s/Enumerate/graph/badge.svg?token=M4PZ6Z6MqU)](https://codecov.io/gh/fab2s/Enumerate) ![Packagist Version](https://img.shields.io/packagist/v/fab2s/enumerate)
+ [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![License](http://poser.pugx.org/fab2s/Enumerate/license)](https://packagist.org/packages/fab2s/Enumerate)
 
 `Enumerate` gives a nice boost to your [native enums](https://www.php.net/manual/en/language.types.enumerations.php).
 
@@ -187,9 +188,9 @@ Enumerate::toValue(SomeUnitEnum::ONE); // "ONE"
 json_encode(SomeUnitEnum::ONE); // "ONE"
 
 
-SomeUnitEnum::fromAny('TWO'); // UnitEnum::TWO
-SomeUnitEnum::tryFromAny('TWO'); // UnitEnum::TWO
-SomeUnitEnum::tryFromAny(UnitEnum::TWO); // UnitEnum::TWO
+SomeUnitEnum::fromAny('TWO'); // SomeUnitEnum::TWO
+SomeUnitEnum::tryFromAny('TWO'); // SomeUnitEnum::TWO
+SomeUnitEnum::tryFromAny(UnitEnum::TWO); // SomeUnitEnum::TWO
 ```
 
 ### `BackedEnum`
