@@ -24,7 +24,7 @@ class Enumerate
      *
      * @throws ReflectionException
      */
-    public static function tryFromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum|null
+    public static function tryFromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum|EnumerateInterface|null
     {
         if ($value === null) {
             return null;
@@ -42,6 +42,7 @@ class Enumerate
             $value = static::toValue($value);
         }
 
+        /** @var UnitEnum|BackedEnum $enum */
         return match (true) {
             static::isStringBacked($enum) => is_string($value) ? $enum::tryFrom($value) : null,
             static::isIntBacked($enum)    => is_int($value) ? $enum::tryFrom($value) : null,
@@ -54,7 +55,7 @@ class Enumerate
      *
      * @throws ReflectionException
      */
-    public static function fromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum
+    public static function fromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum|EnumerateInterface
     {
         return static::tryFromAny($enum, $value, $strict) ?? throw new InvalidArgumentException('Argument $value has no value match in enum ' . static::toEnumFqn($enum));
     }
@@ -62,7 +63,7 @@ class Enumerate
     /**
      * @param UnitEnum|class-string<UnitEnum|BackedEnum> $enum
      */
-    public static function tryFromName(UnitEnum|string $enum, ?string $name): UnitEnum|BackedEnum|null
+    public static function tryFromName(UnitEnum|string $enum, ?string $name): UnitEnum|BackedEnum|EnumerateInterface|null
     {
         foreach ($enum::cases() as $case) {
             if ($case->name === $name) {
@@ -76,7 +77,7 @@ class Enumerate
     /**
      * @param UnitEnum|class-string<UnitEnum|BackedEnum> $enum
      */
-    public static function fromName(UnitEnum|string $enum, string $name): UnitEnum|BackedEnum
+    public static function fromName(UnitEnum|string $enum, string $name): UnitEnum|BackedEnum|EnumerateInterface
     {
         return static::tryFromName($enum, $name) ?? throw new InvalidArgumentException('Argument $name does not match any case name in enum ' . static::toEnumFqn($enum));
     }
