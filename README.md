@@ -1,5 +1,5 @@
 # Enumerate
-[![QA](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml) [![CI](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/fab2s/Enumerate/graph/badge.svg?token=M4PZ6Z6MqU)](https://codecov.io/gh/fab2s/Enumerate) ![Packagist Version](https://img.shields.io/packagist/v/fab2s/enumerate)
+[![QA](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/qa.yml) [![CI](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml/badge.svg)](https://github.com/fab2s/Enumerate/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/fab2s/Enumerate/graph/badge.svg?token=M4PZ6Z6MqU)](https://codecov.io/gh/fab2s/Enumerate) [![Packagist Version](https://img.shields.io/packagist/v/fab2s/enumerate)](https://packagist.org/packages/fab2s/Enumerate)
  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![License](http://poser.pugx.org/fab2s/Enumerate/license)](https://packagist.org/packages/fab2s/Enumerate)
 
 `Enumerate` gives a nice boost to your [native enums](https://www.php.net/manual/en/language.types.enumerations.php).

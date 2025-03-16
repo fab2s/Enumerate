@@ -54,6 +54,7 @@ class Enumerate
      * @param UnitEnum|class-string<UnitEnum|BackedEnum> $enum
      *
      * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     public static function fromAny(UnitEnum|string $enum, int|string|UnitEnum|null $value, bool $strict = true): UnitEnum|BackedEnum|EnumerateInterface
     {
