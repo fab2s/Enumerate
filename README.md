@@ -243,7 +243,7 @@ Enumerate::compares(MyEnum:::someCase, AnotherEnumWithOverlappingCases::someCase
 
 ## Requirements
 
-`Enumerate` is tested against php 8.1, 8.2 and 8.3
+`Enumerate` is tested against php 8.1, 8.2, 8.3 and 8.4
 
 ## Contributing
 
